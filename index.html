@@ -13,26 +13,34 @@
     <section class="app vue-app">
       <h1>VUE</h1>
       <h2>How much will?</h2>
-      <p>{{counter}} + {{step}}</p>
-      <p><strong>Result: {{sum}}</strong></p>
+      <p>{{counter}} {{method}} {{step}}</p>
+      <p><strong>Result: {{total}}</strong></p>
       <div class="math">
         Counter:
         <button class="button minus" @click="decrementCounterHandler">-1</button>
         <button class="button plus" @click="incrementCounterHandler">+1</button>
-        <button class="button division" @click="divideCounterHandler">/2</button>
-        <button class="button multiplication" @click="multiplyCounterHandler">*2</button>
       </div>
       <div class="math">
         Step:
         <button class="button minus" @click="decreaseStep">-2</button>
         <button class="button plus" @click="increaseStep">+2</button>
       </div>
+      <div class="method">
+        Method:
+        <button class="button plus" @click="changeMethod('+')">+</button>
+        <button class="button minus" @click="changeMethod('-')">-</button>
+        <button class="button multiply" @click="changeMethod('*')">*</button>
+        <button class="button divide" @click="changeMethod('/')">/</button>
+      </div>
     </section>
     <hr />
     <section class="app js-app">
       <h1>JS</h1>
       <h2>How much will!</h2>
-      <p><span class="counter"></span> + <span class="step"></span></p>
+      <p>
+        <span class="counter"></span>
+        <span class="method"></span>
+        <span class="step"></span></p>
       <p>
         <strong>Result: <span class="sum"></span></strong>
       </p>
@@ -40,13 +48,18 @@
         Counter:
         <button class="button minus">-1</button>
         <button class="button plus">+1</button>
-        <button class="button division">/2</button>
-        <button class="button multiplication">*2</button>
       </div>
       <div class="math-step">
         Step:
         <button class="button step-minus">-2</button>
         <button class="button step-plus">+2</button>
+      </div>
+      <div class="math-method">
+        Method:
+        <button class="button plus">+</button>
+        <button class="button minus">-</button>
+        <button class="button multiply">*</button>
+        <button class="button divide">/</button>
       </div>
     </section>
     <script>
@@ -55,6 +68,7 @@
         data: {
           counter: 1,
           step: 2,
+          method: '+'
         },
         methods: {
           incrementCounterHandler() {
@@ -63,22 +77,38 @@
           decrementCounterHandler() {
             this.counter -= 1
           },
-          multiplyCounterHandler() {
-            this.counter *= 2
-          },
-          divideCounterHandler() {
-            this.counter /= 2
-          },
           increaseStep() {
             this.step += 2
           },
           decreaseStep() {
             this.step -= 2
           },
+          changeMethod(method) {
+            this.method = method
+          }
         },
         computed: {
-          sum() {
-            return this.counter + this.step
+          total() {
+            let totalValue
+            switch (this.method) {
+              case '+':
+                totalValue = this.counter + this.step
+                break
+              case '-':
+                totalValue = this.counter - this.step
+                break
+              case '*':
+                totalValue = this.counter * this.step
+                break
+              case '/':
+								if (!this.counter && !this.step) {
+                    totalValue = 'not defined'
+								} else {
+                    totalValue = this.counter / this.step
+								}
+								break
+            }
+            return totalValue
           },
         },
       })
@@ -86,18 +116,20 @@
     <script>
       const counterEl = document.querySelector('.js-app .counter')
       const stepEl = document.querySelector('.js-app .step')
+      const sumEl = document.querySelector('.js-app .sum')
+      const methodEl = document.querySelector('.js-app .method')
+
       const buttonElCounterMinus = document.querySelector('.js-app .minus')
       const buttonElCounterPlus = document.querySelector('.js-app .plus')
-      const buttonElCounterDivision = document.querySelector('.js-app .division')
-      const buttonElCounterMultiplication = document.querySelector(
-        '.js-app .multiplication'
-      )
 
       const buttonElStepMinus = document.querySelector('.js-app .step-minus')
       const buttonElStepPlus = document.querySelector('.js-app .step-plus')
 
-      const sumEl = document.querySelector('.js-app .sum')
-      const sumStepEl = document.querySelector('.js-app .step')
+      const buttonPlus = document.querySelector('.js-app .math-method .plus')
+      const buttonMinus = document.querySelector('.js-app .math-method .minus')
+      const buttonMultiply = document.querySelector('.js-app .math-method .multiply')
+      const buttonDivide = document.querySelector('.js-app .math-method .divide')
+
 
       const plusElements =[buttonElCounterPlus, buttonElStepPlus]
       const minusElements = [buttonElCounterMinus, buttonElStepMinus]
@@ -105,6 +137,7 @@
       const data = {
         counter: 1,
         step: 2,
+        method: '+'
       }
 
       const incrementCounterHandler = function (e) {
@@ -121,12 +154,10 @@
           data.step -= 2
         }
       }
-      const multiplyCounterHandler = function () {
-        data.counter = data.counter * 2
-      }
-      const divideCounterHandler = function () {
-        data.counter /= 2
-      }
+      const setCurrentMethod = function (method = '+') {
+				data.method = method
+				methodEl.textContent = data.method
+			}
 
       const updateCounter = function () {
         counterEl.textContent = data.counter
@@ -136,11 +167,28 @@
         stepEl.textContent = data.step
       }
 
-      const getSum = function () {
-        sumEl.textContent = data.counter + data.step
+      const getTotal = function () {
+        switch (data.method) {
+          case '+':
+            sumEl.textContent = data.counter + data.step
+            break
+          case '-':
+            sumEl.textContent = data.counter - data.step
+            break
+          case '*':
+            sumEl.textContent = data.counter * data.step
+            break
+          case '/':
+						if (!data.counter && !data.step) {
+							sumEl.textContent = 'not defined'
+						} else {
+							sumEl.textContent = data.counter / data.step
+						}
+            break
+        }
       }
 
-      const queue = [getSum, updateCounter, updateStep]
+      const queue = [getTotal, updateCounter, updateStep]
 
       Object.keys(data).forEach((key) => {
         let value = data[key]
@@ -159,16 +207,20 @@
 
       counterEl.textContent = data.counter
       stepEl.textContent = data.step
-      getSum()
+      getTotal()
+      setCurrentMethod()
 
-      plusElements.forEach((el) => 
+      plusElements.forEach((el) =>
         el.addEventListener('click', incrementCounterHandler)
       )
       minusElements.forEach((el) => {
         el.addEventListener('click', decrementCounterHandler)
       })
-      buttonElCounterMultiplication.addEventListener('click', multiplyCounterHandler)
-      buttonElCounterDivision.addEventListener('click', divideCounterHandler)
+      buttonPlus.addEventListener('click', () => setCurrentMethod('+'))
+      buttonMinus.addEventListener('click', () => setCurrentMethod('-'))
+      buttonMultiply.addEventListener('click', () => setCurrentMethod('*'))
+      buttonDivide.addEventListener('click', () => setCurrentMethod('/'))
+
     </script>
   </body>
 </html>
