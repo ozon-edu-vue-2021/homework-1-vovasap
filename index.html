@@ -1,107 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Reactivity</title>
-    <link rel="stylesheet" href="./style/index.css">
-    <link rel="icon" href="./images/vue-logo.svg">
+    <link rel="stylesheet" href="./style/index.css" />
+    <link rel="icon" href="./images/vue-logo.svg" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <section class="app vue-app">
-        <h1>VUE</h1>
-        <h2>How much will?</h2>
-        <p>{{counter}} + {{step}}</p>
-        <p><strong>Result: {{sum}}</strong></p>
-        <div class="math">
-            Counter:
-            <button class="button minus" v-on:click="decrementCounterHandler">-1</button>
-            <button class="button plus" v-on:click="incrementCounterHandler">+1</button>
-        </div>
-        <div class="math">
-            Step:
-            <button class="button minus">-2</button>
-            <button class="button plus">+2</button>
-        </div>
+      <h1>VUE</h1>
+      <h2>How much will?</h2>
+      <p>{{counter}} {{method}} {{step}}</p>
+      <p><strong>Result: {{total}}</strong></p>
+      <div class="math">
+        Counter:
+        <button class="button minus" @click="decrementCounterHandler">-1</button>
+        <button class="button plus" @click="incrementCounterHandler">+1</button>
+      </div>
+      <div class="math">
+        Step:
+        <button class="button minus" @click="decreaseStep">-2</button>
+        <button class="button plus" @click="increaseStep">+2</button>
+      </div>
+      <div class="method">
+        Method:
+        <button class="button plus" @click="changeMethod('+')">+</button>
+        <button class="button minus" @click="changeMethod('-')">-</button>
+        <button class="button multiply" @click="changeMethod('*')">*</button>
+        <button class="button divide" @click="changeMethod('/')">/</button>
+      </div>
     </section>
-    <hr>
+    <hr />
     <section class="app js-app">
-        <h1>JS</h1>
-        <h2>How much will!</h2>
-        <p><span class="counter"></span> + <span class="step"></span></p>
-        <p><strong>Result: <span class="sum"></span></strong></p>
-        <div class="math">
-            Counter:
-            <button class="button minus">-1</button>
-            <button class="button plus">+1</button>
-        </div>
-        <div class="math">
-            Step:
-            <button class="button minus">-2</button>
-            <button class="button plus">+2</button>
-        </div>
+      <h1>JS</h1>
+      <h2>How much will!</h2>
+      <p>
+        <span class="counter"></span>
+        <span class="method"></span>
+        <span class="step"></span></p>
+      <p>
+        <strong>Result: <span class="sum"></span></strong>
+      </p>
+      <div class="math-counter">
+        Counter:
+        <button class="button minus">-1</button>
+        <button class="button plus">+1</button>
+      </div>
+      <div class="math-step">
+        Step:
+        <button class="button step-minus">-2</button>
+        <button class="button step-plus">+2</button>
+      </div>
+      <div class="math-method">
+        Method:
+        <button class="button plus">+</button>
+        <button class="button minus">-</button>
+        <button class="button multiply">*</button>
+        <button class="button divide">/</button>
+      </div>
     </section>
     <script>
-        const $vue = new Vue({
-            el: '.vue-app',
-            data: {
-                counter: 1,
-                step: 2
-            },
-            methods: {
-                incrementCounterHandler() {},
-                decrementCounterHandler() {}
-                //...
-            },
-            computed: {
-                sum() {}
+      const $vue = new Vue({
+        el: '.vue-app',
+        data: {
+          counter: 1,
+          step: 2,
+          method: '+'
+        },
+        methods: {
+          incrementCounterHandler() {
+            this.counter += 1
+          },
+          decrementCounterHandler() {
+            this.counter -= 1
+          },
+          increaseStep() {
+            this.step += 2
+          },
+          decreaseStep() {
+            this.step -= 2
+          },
+          changeMethod(method) {
+            this.method = method
+          }
+        },
+        computed: {
+          total() {
+            let totalValue
+            switch (this.method) {
+              case '+':
+                totalValue = this.counter + this.step
+                break
+              case '-':
+                totalValue = this.counter - this.step
+                break
+              case '*':
+                totalValue = this.counter * this.step
+                break
+              case '/':
+								if (!this.counter && !this.step) {
+                    totalValue = 'not defined'
+								} else {
+                    totalValue = this.counter / this.step
+								}
+								break
             }
-        })
+            return totalValue
+          },
+        },
+      })
     </script>
     <script>
-        const counterEl = document.querySelector('.js-app .counter');
-        const buttonElMinus = document.querySelector('.js-app .minus');
-        const buttonElPlus = document.querySelector('.js-app .plus');
-        const sumEl = document.querySelector('.js-app .sum');
-        const stepEl = document.querySelector('.js-app .step');
+      const counterEl = document.querySelector('.js-app .counter')
+      const stepEl = document.querySelector('.js-app .step')
+      const sumEl = document.querySelector('.js-app .sum')
+      const methodEl = document.querySelector('.js-app .method')
 
-        const data = {
-            counter: 1,
-            step: 2
-        };
+      const buttonElCounterMinus = document.querySelector('.js-app .minus')
+      const buttonElCounterPlus = document.querySelector('.js-app .plus')
 
-        const incrementCounterHandler = function () {};
-        const decrementCounterHandler = function () {};
-        //...
-        const getSum = function () {};
+      const buttonElStepMinus = document.querySelector('.js-app .step-minus')
+      const buttonElStepPlus = document.querySelector('.js-app .step-plus')
 
-        const queue = [getSum];
+      const buttonPlus = document.querySelector('.js-app .math-method .plus')
+      const buttonMinus = document.querySelector('.js-app .math-method .minus')
+      const buttonMultiply = document.querySelector('.js-app .math-method .multiply')
+      const buttonDivide = document.querySelector('.js-app .math-method .divide')
 
-        Object.keys(data).forEach(key => {
-            let value = data[key]; // data.counter, data.counter1, data.counter2
-            Object.defineProperty(data, key, {
-                get: function () {
-                    console.log('get');
-                    // queue.push();
-                    return value;
-                },
-                set: function (newValue) {
-                    console.log('set');
-                    value = newValue;
-                    queue.forEach(fn => fn());
-                }
-            });
-        });
 
-        counterEl.textContent = data.counter;
-        stepEl.textContent = data.step;
-        getSum();
-        buttonElMinus.addEventListener('click', decrementCounterHandler);
-        buttonElPlus.addEventListener('click', incrementCounterHandler);
+      const plusElements =[buttonElCounterPlus, buttonElStepPlus]
+      const minusElements = [buttonElCounterMinus, buttonElStepMinus]
+
+      const data = {
+        counter: 1,
+        step: 2,
+        method: '+'
+      }
+
+      const incrementCounterHandler = function (e) {
+        if (e.target.closest('.math-counter')) {
+          data.counter += 1
+        } else if (e.target.closest('.math-step')) {
+          data.step += 2
+        }
+      }
+      const decrementCounterHandler = function (e) {
+        if (e.target.closest('.math-counter')) {
+          data.counter -= 1
+        } else if (e.target.closest('.math-step')) {
+          data.step -= 2
+        }
+      }
+      const setCurrentMethod = function (method = '+') {
+				data.method = method
+				methodEl.textContent = data.method
+			}
+
+      const updateCounter = function () {
+        counterEl.textContent = data.counter
+      }
+
+      const updateStep = function () {
+        stepEl.textContent = data.step
+      }
+
+      const getTotal = function () {
+        switch (data.method) {
+          case '+':
+            sumEl.textContent = data.counter + data.step
+            break
+          case '-':
+            sumEl.textContent = data.counter - data.step
+            break
+          case '*':
+            sumEl.textContent = data.counter * data.step
+            break
+          case '/':
+						if (!data.counter && !data.step) {
+							sumEl.textContent = 'not defined'
+						} else {
+							sumEl.textContent = data.counter / data.step
+						}
+            break
+        }
+      }
+
+      const queue = [getTotal, updateCounter, updateStep]
+
+      Object.keys(data).forEach((key) => {
+        let value = data[key]
+        Object.defineProperty(data, key, {
+          get: function () {
+            console.log('get')
+            return value
+          },
+          set: function (newValue) {
+            console.log('set')
+            value = newValue
+            queue.forEach((fn) => fn())
+          },
+        })
+      })
+
+      counterEl.textContent = data.counter
+      stepEl.textContent = data.step
+      getTotal()
+      setCurrentMethod()
+
+      plusElements.forEach((el) =>
+        el.addEventListener('click', incrementCounterHandler)
+      )
+      minusElements.forEach((el) => {
+        el.addEventListener('click', decrementCounterHandler)
+      })
+      buttonPlus.addEventListener('click', () => setCurrentMethod('+'))
+      buttonMinus.addEventListener('click', () => setCurrentMethod('-'))
+      buttonMultiply.addEventListener('click', () => setCurrentMethod('*'))
+      buttonDivide.addEventListener('click', () => setCurrentMethod('/'))
+
     </script>
-</body>
-
+  </body>
 </html>
